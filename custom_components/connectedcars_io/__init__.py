@@ -8,7 +8,7 @@ from .const import CONF_HEALTH_SENSITIVITY, DOMAIN
 from .minvw import MinVW
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS = ["binary_sensor", "device_tracker", "sensor"]
+PLATFORMS = ["binary_sensor", "device_tracker", "sensor", "button"]
 
 
 async def async_setup_entry(
