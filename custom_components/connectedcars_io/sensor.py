@@ -509,6 +509,7 @@ class MinVwEntity(SensorEntity):
             self._updated = await self._connectedcarsclient.get_value(
                 self._vehicle["id"], ["rangeTotalKm", "time"]
             )
+            
 def update(self):
         """Fetch new data manually."""
         self._state = "New data from API"
