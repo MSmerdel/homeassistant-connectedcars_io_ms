@@ -509,11 +509,7 @@ class MinVwEntity(SensorEntity):
             self._updated = await self._connectedcarsclient.get_value(
                 self._vehicle["id"], ["rangeTotalKm", "time"]
             )
-            
-def update(self):
-        """Fetch new data manually."""
-        self._state = "New data from API"
-        self.schedule_update_ha_state()
+
 
 def is_date_valid(date) -> bool:
     """Check date validity."""
