@@ -109,7 +109,7 @@ async def async_setup_entry(
                     MinVwEntity(
                         vehicle, "mileage latest month", False, _connectedcarsclient
                     )
-                )
+                )            
             if (
                 "refuelEvents" in vehicle["has"]
                 and "trips" in vehicle["has"]
@@ -120,6 +120,12 @@ async def async_setup_entry(
                         vehicle, "mileage since refuel", False, _connectedcarsclient
                     )
                 )
+            sensors.append(
+                    MinVwEntity(
+                        vehicle, "latest refresh", True, _connectedcarsclient
+                    )
+                )
+            
         async_add_entities(sensors, update_before_add=True)
         async_add_entities(sensors_update_later, update_before_add=False)
 
@@ -127,6 +133,12 @@ async def async_setup_entry(
         _LOGGER.warning("Failed to add sensors: %s", err)
         _LOGGER.debug("%s", traceback.format_exc())
         raise PlatformNotReady from err
+    
+    async def handle_refresh_data_event(event):
+        """Handle button press event and refresh sensor data."""
+        vin = event.data["vin"]
+        _LOGGER.info("Received refresh event for VIN: %s", vin)
+        MinVwEntity.async_update(vehicle)
 
     # Build array with devices to keep
     devices = [(DOMAIN, vehicle["vin"]) for vehicle in data]
@@ -226,7 +238,9 @@ class MinVwEntity(SensorEntity):
             self._unit = "km/l"
             self._icon = "mdi:gas-station-outline"
             self._suggested_display_precision = 1
-
+        elif self._itemName == "latest refresh":
+            self._device_class = SensorDeviceClass.DATE
+            self._icon = "mdi:clock"
         _LOGGER.debug("Adding sensor: %s", self._unique_id)
 
     @property
@@ -480,6 +494,8 @@ class MinVwEntity(SensorEntity):
             # self._state = fuelEconomy
 
         # EV
+        if self._itemName = "latest refresh":
+            self._state = datetime.datetime.now();
         if self._itemName == "EVchargePercentage":
             self._state = await self._connectedcarsclient.get_value(
                 self._vehicle["id"], ["chargePercentage", "pct"]
