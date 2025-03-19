@@ -45,6 +45,8 @@ async def async_setup_entry(
         vin = event.data["vin"]
         _LOGGER.info("Received refresh event for VIN: %s", vin)
         CcTrackerEntity.async_update(vehicle)
+    
+    hass.bus.async_listen("connectedcars_refresh_data", handle_refresh_data_event)
 
 class CcTrackerEntity(TrackerEntity):
     """Representation of a Device TrackerEntity."""
