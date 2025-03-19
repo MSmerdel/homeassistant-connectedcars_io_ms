@@ -44,7 +44,11 @@ async def async_setup_entry(
         """Handle button press event and refresh sensor data."""
         vin = event.data["vin"]
         _LOGGER.info("Received refresh event for VIN: %s", vin)
-        CcTrackerEntity.async_update(vehicle)
+        # Find and update the relevant sensor
+        for sensor in sensors:
+            if sensor.vehicle["vin"] == vin:
+                await sensor.async_update()
+                _LOGGER.info("Sensor updated for VIN: %s", vin)
     
     hass.bus.async_listen("connectedcars_refresh_data", handle_refresh_data_event)
 
